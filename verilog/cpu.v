@@ -1,7 +1,8 @@
 // CPU central processing unit 中央处理器
-// comprise of BIU and EU 分为BIU和EU两大部分
 
+// 地址和宽度均为8位
 // 为简便起见不加入中断和流水线
+// 地址总线输入和输出不做时分复用
 
 module cpu(
 	clk, // clock 时钟
