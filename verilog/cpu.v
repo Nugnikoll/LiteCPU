@@ -12,7 +12,6 @@ module cpu(
 	data_out, // data bus 输出数据总线
 
 	ready, // ready 完成信号
-	bhe, // bus high enable 为高时使能总线
 	read, // read 读信号
 	write // write 写信号
 
@@ -26,12 +25,8 @@ module cpu(
 	output [7:0] data_out;
 
 	input ready;
-	output bhe;
-	output n_rd;
-	output n_wr;
-	output ale;
-	output dtr;
-	output n_den;
+	output read;
+	output write;
 
 
 	reg [7:0] ip; // instruction pointer
