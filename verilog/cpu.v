@@ -46,6 +46,7 @@ module cpu(
 	reg [7:0] op2; // operator 2
 	wire [7:0] op_res;
 
+	// do some calculation
 	alu alu_u(
 		.cmd(cmd[5:4]),
 		.op1(op1),
@@ -53,6 +54,7 @@ module cpu(
 		.result(op_res)
 	);
 
+	// select one register from r0, r1, r2, ip
 	reg_mux reg_mux_u0(
 		.cmd(cmd[3:2]),
 		.r0(r0),
@@ -62,6 +64,7 @@ module cpu(
 		.result(reg_res0)
 	);
 
+	// select one register from r0, r1, r2, ip
 	reg_mux reg_mux_u1(
 		.cmd(cmd[1:0]),
 		.r0(r0),

@@ -21,7 +21,7 @@ module memory
 		begin
 			if(reset == 1)
 				for(i = 0; i < size; ++i)
-					mem_block[i] <= 8'h00
+					mem_block[i] <= 8'h00;
 			else
 				
 		end
