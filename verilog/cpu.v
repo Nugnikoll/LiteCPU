@@ -30,12 +30,19 @@ module cpu(
 	output write;
 
 	reg [7:0] ip; // instruction pointer
-	reg [7:0] flags; // flags register
 
 	// general registors
 	reg [7:0] r0;
 	reg [7:0] r1;
 	reg [7:0] r2;
-	reg [7:0] r3;
+
+	reg [7:0] add_buf; // address buffer
+	reg [7:0] data_buf; // data buffer
+	reg [7:0] cmd; // instruction
+
+	reg [7:0] op1; // operator 1
+	reg [7:0] op2; // operator 2
+
 	
+
 endmodule
