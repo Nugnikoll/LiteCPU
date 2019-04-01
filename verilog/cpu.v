@@ -29,7 +29,6 @@ module cpu(
 	output read;
 	output write;
 
-
 	reg [7:0] ip; // instruction pointer
 	reg [7:0] flags; // flags register
 
