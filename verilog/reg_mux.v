@@ -1,3 +1,7 @@
+// 寄存器选择模块
+// select one register from r0, r1, r2, r3
+// 从r0, r1, r2, r3中选择一个寄存器，结果输出到result
+
 module reg_mux(cmd, r0, r1, r2, r3, result);
 
 	input [1:0] cmd;

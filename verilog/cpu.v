@@ -1,8 +1,34 @@
-// CPU central processing unit 中央处理器
+//CPU central processing unit 中央处理器
 
-// 地址和宽度均为8位
-// 为简便起见不加入中断和流水线
-// 地址总线输入和输出不做时分复用
+//地址和宽度均为8位
+//为简便起见不加入中断和流水线
+//地址总线输入和输出不做时分复用
+
+//外设和内存使用相同地址空间
+//访问外部数据寻址时只支持寄存器寻址
+
+//指令格式
+//[7:6]位表示数据传输方向
+//	2'b00表示由寄存器到寄存器
+//	2'b01表示由外部到寄存器，使用操作数1对应的寄存器寻址
+//		如果操作数1对应的寄存器是ip其实就是做了次立即数寻址，这时ip需要在执行后额外加一
+//	2'b10表示由寄存器到外部，使用操作数2对应的寄存器寻址
+//	2'b11暂时未定义，未来可做其他用途
+//[5:4]位表示运算类型
+//	2'b00表示直接赋值不做额外运算
+//	2'b01表示做加法
+//	2'b10表示做减法
+//	2'b11表示判断操作数是否为0
+//[3:2]位表示第一个操作数对应的寄存器
+//	2'b00表示对应r0
+//	2'b01表示对应r1
+//	2'b10表示对应r2
+//	2'b11表示对应ip
+//[1:0]位表示第二个操作数对应的寄存器
+//	2'b00表示对应r0
+//	2'b01表示对应r1
+//	2'b10表示对应r2
+//	2'b11表示对应ip
 
 module cpu(
 	clk, // clock 时钟
@@ -29,24 +55,26 @@ module cpu(
 	output read;
 	output write;
 
-	reg [7:0] ip; // instruction pointer
+	reg [7:0] ip; // instruction pointer 指令指针寄存器
 
-	// general registors
+	// general registors 通用寄存器
 	reg [7:0] r0;
 	reg [7:0] r1;
 	reg [7:0] r2;
 
-	reg [7:0] add_buf; // address buffer
-	reg [7:0] data_buf; // data buffer
-	reg [7:0] cmd; // instruction
+	reg [7:0] add_buf; // address buffer 地址缓冲寄存器
+	reg [7:0] data_buf; // data buffer 数据缓冲寄存器
+	reg [7:0] cmd; // instruction 指令寄存器
+
 	wire [7:0] reg_res0;
 	wire [7:0] reg_res1;
 
-	reg [7:0] op1; // operator 1
-	reg [7:0] op2; // operator 2
+	reg [7:0] op1; // operator 1 操作数1寄存器
+	reg [7:0] op2; // operator 2 操作数2寄存器
 	wire [7:0] op_res;
 
 	// do some calculation
+	// 运算
 	alu alu_u(
 		.cmd(cmd[5:4]),
 		.op1(op1),
@@ -55,6 +83,7 @@ module cpu(
 	);
 
 	// select one register from r0, r1, r2, ip
+	// 从r0, r1, r2, ip中选择一个寄存器，结果输出到reg_res0
 	reg_mux reg_mux_u0(
 		.cmd(cmd[3:2]),
 		.r0(r0),
@@ -65,6 +94,7 @@ module cpu(
 	);
 
 	// select one register from r0, r1, r2, ip
+	// 从r0, r1, r2, ip中选择一个寄存器，结果输出到reg_res1
 	reg_mux reg_mux_u1(
 		.cmd(cmd[1:0]),
 		.r0(r0),

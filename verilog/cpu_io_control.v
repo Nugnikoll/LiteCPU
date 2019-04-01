@@ -1,3 +1,5 @@
+// 用于控制CPU向外界读写数据的模块
+
 module cpu_io_control(clk, );
 
 	reg [2:0] ;
