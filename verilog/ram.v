@@ -1,14 +1,17 @@
-module memory
-	#(size, delay_read, delay_write)
+// random access memory 随机访问存储器
+
+module ram
+	#(size_addr, size)
 	(clk, reset, address, data_in, data_out, read, write, ready_r, ready_w);
 
+	parameter size_addr = 8;
 	parameter size = 256;
 
 	input clk;
 	input reset;
-	input address;
-	input data_in;
-	output data_out;
+	input [size_addr - 1:0] address;
+	input [7:0] data_in;
+	output [7:0] data_out;
 	input read;
 	input write;
 	output ready_r;
