@@ -11,14 +11,10 @@ module reg_mux(cmd, r0, r1, r2, r3, result);
 	input [7:0] r3;
 	output [7:0] result;
 
-	always @(*)
-		begin
-			case(cmd)
-			2'b00: result <= r0;
-			2'b01: result <= r1;
-			2'b10: result <= r2;
-			2'b11: result <= r3;
-			endcase
-		end
+	assign result =
+		cmd == 2'b00 ? r0:
+		cmd == 2'b01 ? r1:
+		cmd == 2'b10 ? r2:
+		r3;
 
 endmodule

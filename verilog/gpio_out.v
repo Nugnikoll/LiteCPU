@@ -1,11 +1,11 @@
-// random access memory 随机访问存储器
+// buffered gpio ouput module
 
-module ram
+module gpio_out
 	#(size_addr, size)
 	(clk, reset, read, write, ready_r, ready_w, address, data_in, data_out);
 
-	parameter size_addr = 8;
-	parameter size = 256;
+	parameter size_addr = 1;
+	parameter size = 1;
 
 	input clk;
 	input reset;

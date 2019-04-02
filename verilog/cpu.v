@@ -13,6 +13,7 @@
 //	2'b01表示由外部到寄存器，使用操作数1对应的寄存器寻址
 //		如果操作数1对应的寄存器是ip其实就是做了次立即数寻址，这时ip需要在执行后额外加一
 //	2'b10表示由寄存器到外部，使用操作数2对应的寄存器寻址
+//		如果操作数2对应的寄存器是ip其实就是执行了一次跳转指令
 //	2'b11暂时未定义，未来可做其他用途
 //[5:4]位表示运算类型
 //	2'b00表示直接赋值不做额外运算
@@ -29,6 +30,12 @@
 //	2'b01表示对应r1
 //	2'b10表示对应r2
 //	2'b11表示对应ip
+
+`include "type.v"
+`include "cpu_control.v"
+`include "cpu_io_control.v"
+`include "alu.v"
+`include "reg_mux.v"
 
 module cpu(
 	clk, // clock 时钟
@@ -62,7 +69,7 @@ module cpu(
 	reg [7:0] r1;
 	reg [7:0] r2;
 
-	reg [7:0] add_buf; // address buffer 地址缓冲寄存器
+	reg [7:0] addr_buf; // address buffer 地址缓冲寄存器
 	reg [7:0] data_buf; // data buffer 数据缓冲寄存器
 	reg [7:0] cmd; // instruction 指令寄存器
 
@@ -72,6 +79,24 @@ module cpu(
 	reg [7:0] op1; // operator 1 操作数1寄存器
 	reg [7:0] op2; // operator 2 操作数2寄存器
 	wire [7:0] op_res;
+
+	wire [3:0] cpu_state;
+	wire control_read;
+	wire control_write;
+
+	cpu_control cpu_control_u(
+		.clk(clk),
+		.cmd(cmd[7:6]),
+		.ready(ready),
+		.cpu_state(cpu_state)
+	);
+
+	assign control_read = (
+		cpu_state == `cpu_fetch_begin
+		|| cpu_state == `cpu_exec_load_begin
+	);
+
+	assign control_write = (cpu_state == `cpu_exec_store_begin);
 
 	// do some calculation
 	// 运算
@@ -103,5 +128,20 @@ module cpu(
 		.r3(ip),
 		.result(reg_res1)
 	);
+
+	always @(clk)
+		begin
+			if(control_write)
+				addr_buf <= op2;
+			else if(control_read)
+				if(cpu_state <= `cpu_fetch_end)
+					addr_buf <= ip;
+				else
+					addr_buf <= op1;
+		end
+
+//	always @(clk)
+//		begin
+//			if()
 
 endmodule

@@ -6,23 +6,55 @@
 // 使用ALU计算时的状态命名带有calc
 // 当进行到名称带有io的状态时，需要进行向外部的读/写操作，这时模块cpu_io_control需要工作
 
-module cpu_control(clk, );
+`include "type.v"
 
-	reg  cpu_state;
-	parameter cpu_fetch_begin = 0;
-	parameter cpu_fetch_io = 1;
-	parameter cpu_fetch_end = 2;
-	parameter cpu_exec_begin = 3;
-	parameter cpu_exec_load_begin = 4;
-	parameter cpu_exec_load_io = 5;
-	parameter cpu_exec_load_end = 6;
-	parameter cpu_exec_calc = 7;
-	parameter cpu_exec_store_begin = 8;
-	parameter cpu_exec_store_io = 9;
+module cpu_control(clk, reset, cmd, ready, cpu_state);
+
+
+	input clk;
+	input reset;
+	input [1:0] cmd;
+	input ready;
+	output reg [3:0] cpu_state;
 
 	always @(posedge clk)
 		begin
-			
+			if(reset)
+				cpu_state <= `cpu_fetch_begin;
+			else
+				case(cpu_state)
+				`cpu_fetch_begin:
+					cpu_state <= `cpu_fetch_io;
+				`cpu_fetch_io:
+					if(ready)
+						cpu_state <= `cpu_fetch_end;
+				`cpu_fetch_end:
+					cpu_state <= `cpu_exec_begin;
+				`cpu_exec_begin:
+					if(cmd[0])
+						cpu_state <= `cpu_exec_load_begin;
+					else
+						cpu_state <= `cpu_exec_calc;
+				`cpu_exec_load_begin:
+					cpu_state <= `cpu_exec_load_io;
+				`cpu_exec_load_io:
+					if(ready)
+						cpu_state <= `cpu_exec_load_end;
+				`cpu_exec_load_end:
+					cpu_state <= `cpu_exec_calc;
+				`cpu_exec_calc:
+					if(cmd[1])
+						cpu_state <= `cpu_exec_store_begin;
+					else
+						cpu_state <= `cpu_fetch_begin;
+				`cpu_exec_store_begin:
+					cpu_state <=  `cpu_exec_store_io;
+				`cpu_exec_store_io:
+					if(ready)
+						cpu_state <= `cpu_fetch_begin;
+				default:
+					cpu_state <= `cpu_fetch_begin;
+				endcase
 		end
 
 endmodule
