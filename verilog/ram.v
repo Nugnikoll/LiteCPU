@@ -1,11 +1,10 @@
 // random access memory 随机访问存储器
 
 module ram
-	#(size_addr, size)
 	(clk, reset, read, write, ready_r, ready_w, address, data_in, data_out);
 
 	parameter size_addr = 8;
-	parameter size = 256;
+	parameter size = 128;
 
 	input clk;
 	input reset;
@@ -22,10 +21,10 @@ module ram
 
 	always @(posedge clk)
 		begin
-			if(reset == 1)
+			if(reset)
 				for(i = 0; i < size; ++i)
-					mem_block[i] <= 8'h00
-			else if(write == 1)
+					mem_block[i] <= 8'h00;
+			else if(write)
 				mem_block[address] <= data_in;
 		end
 
@@ -41,6 +40,6 @@ module ram
 				out_buf <= memblock[address];
 		end
 
-	assign data_out <= outbuf;
+	assign data_out = outbuf;
 
 endmodule

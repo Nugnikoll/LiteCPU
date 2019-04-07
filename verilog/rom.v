@@ -1,12 +1,12 @@
 // read-only memory 只读存储器
 
 module rom
-	#(size_addr, size, data_init)
 	(clk, read, ready, address, data);
 
 	parameter size_addr = 8;
-	parameter size = 256;
-	parameter data_init;
+	parameter size = 128;
+	parameter [size * 8 - 1:0] data_init = 1024'b0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+;
 
 	input clk;
 	input read;
@@ -33,6 +33,6 @@ module rom
 				out_buf <= memblock[address];
 		end
 
-	assign data <= outbuf;
+	assign data = outbuf;
 
-endmodule;
+endmodule

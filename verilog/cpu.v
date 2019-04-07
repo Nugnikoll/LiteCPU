@@ -40,27 +40,24 @@
 module cpu(
 	clk, // clock 时钟
 	reset, // reset 复位信号
+	ready, // ready 完成信号
+	read, // read 读信号
+	write, // write 写信号
 
 	address, // address bus 地址总线
 	data_in, // data bus 输入数据总线
-	data_out, // data bus 输出数据总线
-
-	ready, // ready 完成信号
-	read, // read 读信号
-	write // write 写信号
-
+	data_out // data bus 输出数据总线
 );
 
 	input clk;
 	input reset;
+	input ready;
+	output read;
+	output write;
 
 	output [7:0] address;
 	input [7:0] data_in;
 	output [7:0] data_out;
-
-	input ready;
-	output read;
-	output write;
 
 	reg [7:0] ip; // instruction pointer 指令指针寄存器
 

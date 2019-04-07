@@ -1,9 +1,9 @@
 
 .PHONY: all clean
 
-all: cpu.vvp
+all: computer.vvp
 
-cpu.vvp: ../verilog/cpu.v $(wildcard ../verilog/*.v)
+computer.vvp: ../verilog/computer_tb.v $(wildcard ../verilog/*.v)
 	iverilog -I ../verilog $< -o $@
 
 clean:
