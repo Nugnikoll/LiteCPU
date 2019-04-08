@@ -21,13 +21,11 @@ module gpio_out
 	reg [7:0] out_buf;
 
 	always @(posedge clk)
-		begin
-			if(reset == 1)
-				for(i = 0; i < size; ++i)
-					mem_block[i] <= 8'h00
-			else if(write == 1)
-				mem_block[address] <= data_in;
-		end
+		if(reset == 1)
+			for(i = 0; i < size; ++i)
+				mem_block[i] <= 8'h00
+		else if(write == 1)
+			mem_block[address] <= data_in;
 
 	always @(posedge clk)
 		begin
@@ -36,10 +34,8 @@ module gpio_out
 		end
 
 	always @(posedge clk)
-		begin
-			if(read == 1)
-				out_buf <= memblock[address];
-		end
+		if(read == 1)
+			out_buf <= memblock[address];
 
 	assign data_out <= outbuf;
 

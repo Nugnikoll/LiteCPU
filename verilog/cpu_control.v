@@ -18,45 +18,43 @@ module cpu_control(clk, reset, cmd, ready, cpu_state);
 	output reg [3:0] cpu_state;
 
 	always @(posedge clk)
-		begin
-			if(reset)
-				cpu_state <= `cpu_fetch_begin;
-			else
-				case(cpu_state)
-				`cpu_fetch_begin:
-					cpu_state <= `cpu_fetch_io;
-				`cpu_fetch_io:
-					if(ready)
-						cpu_state <= `cpu_fetch_end;
-				`cpu_fetch_end:
-					cpu_state <= `cpu_exec_begin;
-				`cpu_exec_begin:
-					if(cmd[0])
-						cpu_state <= `cpu_exec_load_begin;
-					else
-						cpu_state <= `cpu_exec_calc;
-				`cpu_exec_load_begin:
-					cpu_state <= `cpu_exec_load_io;
-				`cpu_exec_load_io:
-					if(ready)
-						cpu_state <= `cpu_exec_load_end;
-				`cpu_exec_load_end:
+		if(reset)
+			cpu_state <= `cpu_fetch_begin;
+		else
+			case(cpu_state)
+			`cpu_fetch_begin:
+				cpu_state <= `cpu_fetch_io;
+			`cpu_fetch_io:
+				if(ready)
+					cpu_state <= `cpu_fetch_end;
+			`cpu_fetch_end:
+				cpu_state <= `cpu_exec_begin;
+			`cpu_exec_begin:
+				if(cmd[0])
+					cpu_state <= `cpu_exec_load_begin;
+				else
 					cpu_state <= `cpu_exec_calc;
-				`cpu_exec_calc:
-					if(cmd[1])
-						cpu_state <= `cpu_exec_store_begin;
-					else
-						cpu_state <= `cpu_exec_end;
-				`cpu_exec_store_begin:
-					cpu_state <=  `cpu_exec_store_io;
-				`cpu_exec_store_io:
-					if(ready)
-						cpu_state <= `cpu_fetch_begin;
-				`cpu_exec_end:
+			`cpu_exec_load_begin:
+				cpu_state <= `cpu_exec_load_io;
+			`cpu_exec_load_io:
+				if(ready)
+					cpu_state <= `cpu_exec_load_end;
+			`cpu_exec_load_end:
+				cpu_state <= `cpu_exec_calc;
+			`cpu_exec_calc:
+				if(cmd[1])
+					cpu_state <= `cpu_exec_store_begin;
+				else
+					cpu_state <= `cpu_exec_end;
+			`cpu_exec_store_begin:
+				cpu_state <=  `cpu_exec_store_io;
+			`cpu_exec_store_io:
+				if(ready)
 					cpu_state <= `cpu_fetch_begin;
-				default:
-					cpu_state <= `cpu_fetch_begin;
-				endcase
-		end
+			`cpu_exec_end:
+				cpu_state <= `cpu_fetch_begin;
+			default:
+				cpu_state <= `cpu_fetch_begin;
+			endcase
 
 endmodule
