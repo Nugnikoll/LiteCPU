@@ -22,7 +22,7 @@ initial
 		reset = 0;
 		#10 reset = 1;
 		#10 reset = 0;
-		#100 $finish;
+		#2000 $finish;
 	end
 
 	computer computer_u(

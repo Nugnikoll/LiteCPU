@@ -8,6 +8,7 @@
 `define cpu_exec_calc 7
 `define cpu_exec_store_begin 8
 `define cpu_exec_store_io 9
+`define cpu_exec_end 10
 
 `define io_idle 0
 `define io_read_begin 1

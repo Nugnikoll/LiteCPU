@@ -46,12 +46,14 @@ module cpu_control(clk, reset, cmd, ready, cpu_state);
 					if(cmd[1])
 						cpu_state <= `cpu_exec_store_begin;
 					else
-						cpu_state <= `cpu_fetch_begin;
+						cpu_state <= `cpu_exec_end;
 				`cpu_exec_store_begin:
 					cpu_state <=  `cpu_exec_store_io;
 				`cpu_exec_store_io:
 					if(ready)
 						cpu_state <= `cpu_fetch_begin;
+				`cpu_exec_end:
+					cpu_state <= `cpu_fetch_begin;
 				default:
 					cpu_state <= `cpu_fetch_begin;
 				endcase

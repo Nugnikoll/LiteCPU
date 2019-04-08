@@ -89,6 +89,8 @@ module cpu(
 		|| cpu_state == `cpu_exec_load_begin
 	);
 
+	assign data_out = data_buf;
+
 	cpu_control cpu_control_u(
 		.clk(clk),
 		.reset(reset),
@@ -142,22 +144,52 @@ module cpu(
 	);
 
 	always @(posedge clk)
-		begin
-			if(control_write)
-				addr_buf <= op2;
-			else if(control_read)
-				if(cpu_state <= `cpu_fetch_end)
-					addr_buf <= ip;
-				else
-					addr_buf <= op1;
-		end
+		if(cpu_state == `cpu_exec_calc && cmd[1:0] == 2'b10)
+			addr_buf <= op2;
+		else if(control_read)
+			if(cpu_state <= `cpu_fetch_end)
+				addr_buf <= ip;
+			else
+				addr_buf <= op1;
 
 	always @(posedge clk)
-		begin
-			if(reset)
-				ip <= 0;
-			else if(cpu_state == `cpu_fetch_end)
+		if(reset)
+			ip <= 0;
+		else if(cpu_state == `cpu_fetch_end)
+			ip <= ip + 1;
+		else if(cpu_state == `cpu_exec_end)
+			if(cmd[1:0] == 2'b11)
+				ip <= op2;
+			else if(cmd[7:6] == 2'b01 && cmd[3:2] == 2'b11)
 				ip <= ip + 1;
-		end
+
+	always @(posedge clk)
+		if(cpu_state == `cpu_fetch_end)
+			cmd <= data_in;
+
+	always @(posedge clk)
+		if(cpu_state == `cpu_exec_begin)
+			begin
+				op1 <= reg_res0;
+				op2 <= reg_res1;
+			end
+		else if(cpu_state == `cpu_exec_load_end)
+			op1 <= data_buf;
+		else if(cpu_state == `cpu_exec_calc)
+			op2 <= op_res;
+
+	always @(posedge clk)
+		if(io_state == `io_write_begin)
+			data_buf <= op2;
+		else if(io_state == `io_read_wait)
+			data_buf <= data_in;
+
+	always @(posedge clk)
+		if(cpu_state == `cpu_exec_end)
+			case(cmd[1:0])
+			2'b00: r0 <= op2;
+			2'b01: r1 <= op2;
+			2'b10: r2 <= op2;
+			endcase
 
 endmodule
