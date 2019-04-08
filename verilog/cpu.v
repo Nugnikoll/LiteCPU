@@ -179,7 +179,7 @@ module cpu(
 			op2 <= op_res;
 
 	always @(posedge clk)
-		if(io_state == `io_write_begin)
+		if(control_write)
 			data_buf <= op2;
 		else if(io_state == `io_read_wait)
 			data_buf <= data_in;

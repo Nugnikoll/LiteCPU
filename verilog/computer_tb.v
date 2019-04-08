@@ -4,6 +4,7 @@ module computer_tb;
 
 reg clk;
 reg reset;
+wire port_out;
 
 initial
 	begin
@@ -27,7 +28,8 @@ initial
 
 	computer computer_u(
 		.clk(clk),
-		.reset(reset)
+		.reset(reset),
+		.port_out()
 	);
 
 endmodule
