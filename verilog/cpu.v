@@ -144,7 +144,7 @@ module cpu(
 	);
 
 	always @(posedge clk)
-		if(cpu_state == `cpu_exec_calc && cmd[1:0] == 2'b10)
+		if(cpu_state == `cpu_exec_calc && cmd[7:6] == 2'b10)
 			addr_buf <= op2;
 		else if(control_read)
 			if(cpu_state <= `cpu_fetch_end)
