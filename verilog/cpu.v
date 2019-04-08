@@ -78,22 +78,37 @@ module cpu(
 	wire [7:0] op_res;
 
 	wire [3:0] cpu_state;
+	wire [2:0] io_state;
+
 	wire control_read;
 	wire control_write;
 
-	cpu_control cpu_control_u(
-		.clk(clk),
-		.cmd(cmd[7:6]),
-		.ready(ready),
-		.cpu_state(cpu_state)
-	);
-
+	assign control_write = (cpu_state == `cpu_exec_store_begin);
 	assign control_read = (
 		cpu_state == `cpu_fetch_begin
 		|| cpu_state == `cpu_exec_load_begin
 	);
 
-	assign control_write = (cpu_state == `cpu_exec_store_begin);
+	cpu_control cpu_control_u(
+		.clk(clk),
+		.reset(reset),
+		.cmd(cmd[7:6]),
+		.ready(ready),
+		.cpu_state(cpu_state)
+	);
+
+	cpu_io_control cpu_io_control_u(
+		.clk(clk),
+		.reset(reset),
+		.cpu_state(cpu_state),
+		.io_state(io_state),
+		.ready(ready)
+	);
+
+	assign address = addr_buf;
+
+	assign read = (io_state == `io_read_begin);
+	assign write = (io_state == `io_write_begin);
 
 	// do some calculation
 	// 运算
@@ -126,7 +141,7 @@ module cpu(
 		.result(reg_res1)
 	);
 
-	always @(clk)
+	always @(posedge clk)
 		begin
 			if(control_write)
 				addr_buf <= op2;
@@ -137,8 +152,12 @@ module cpu(
 					addr_buf <= op1;
 		end
 
-//	always @(clk)
-//		begin
-//			if()
+	always @(posedge clk)
+		begin
+			if(reset)
+				ip <= 0;
+			else if(cpu_state == `cpu_fetch_end)
+				ip <= ip + 1;
+		end
 
 endmodule

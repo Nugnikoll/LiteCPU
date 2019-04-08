@@ -13,8 +13,8 @@ module ram
 	output [7:0] data_out;
 	input read;
 	input write;
-	output ready_r;
-	output ready_w;
+	output reg ready_r;
+	output reg ready_w;
 
 	reg [7:0] mem_block [size - 1: 0];
 	reg [7:0] out_buf;
@@ -22,8 +22,11 @@ module ram
 	always @(posedge clk)
 		begin
 			if(reset)
-				for(i = 0; i < size; ++i)
-					mem_block[i] <= 8'h00;
+				begin : mem_for
+					integer i;
+					for(i = 0; i < size; ++i)
+						mem_block[i] <= 8'h00;
+				end
 			else if(write)
 				mem_block[address] <= data_in;
 		end
@@ -37,9 +40,9 @@ module ram
 	always @(posedge clk)
 		begin
 			if(read == 1)
-				out_buf <= memblock[address];
+				out_buf <= mem_block[address];
 		end
 
-	assign data_out = outbuf;
+	assign data_out = out_buf;
 
 endmodule

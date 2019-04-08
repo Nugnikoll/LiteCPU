@@ -5,12 +5,10 @@ module rom
 
 	parameter size_addr = 8;
 	parameter size = 128;
-	parameter [size * 8 - 1:0] data_init = 1024'b0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-;
 
 	input clk;
 	input read;
-	output ready;
+	output reg ready;
 	input [size_addr - 1:0] address;
 	output [7:0] data;
 
@@ -19,7 +17,7 @@ module rom
 
 	initial
 		begin
-			mem_block <= data_init;
+			$readmemh("../data/rom_sum.dat", mem_block);
 		end
 
 	always @(posedge clk)
@@ -30,9 +28,9 @@ module rom
 	always @(posedge clk)
 		begin
 			if(read == 1)
-				out_buf <= memblock[address];
+				out_buf <= mem_block[address];
 		end
 
-	assign data = outbuf;
+	assign data = out_buf;
 
 endmodule

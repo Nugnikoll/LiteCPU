@@ -2,15 +2,15 @@
 
 `include "type.v"
 
-module cpu_io_control(clk, reset, control_read, control_write, ready);
+module cpu_io_control(clk, reset, ready, cpu_state, io_state);
 
 	input clk;
 	input reset;
 	input control_read;
 	input control_write;
 	input ready;
-
-	reg [2:0] io_state;
+	input [3:0] cpu_state;
+	output reg [2:0] io_state;
 
 	always @(posedge clk)
 		begin
@@ -19,9 +19,12 @@ module cpu_io_control(clk, reset, control_read, control_write, ready);
 			else
 				case(io_state)
 				`io_idle:
-					if(control_write == 1)
+					if(cpu_state == `cpu_exec_store_begin)
 						io_state <= `io_write_begin;
-					else if(control_read == 1)
+					else if(
+						cpu_state == `cpu_fetch_begin
+						|| cpu_state == `cpu_exec_load_begin
+					)
 						io_state <= `io_read_begin;
 				`io_read_begin:
 					io_state <= `io_read_wait;
