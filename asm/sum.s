@@ -10,10 +10,10 @@ label_loop: // label_loop = 4
 	test %r2, %r2				// 3a
 	add %r2, %r2				// 1a
 	add %r2, %ip				// 1b
-	mov label_end, %ip			// 4f 11
-	mov label_loop, %ip			// 4f 04
+	mov $label_end, %ip			// 4f 11
+	mov $label_loop, %ip		// 4f 04
 label_end: // label_end = 17
 	mov $255, %r2				// 4e ff
 	mov %r0, (%r2)				// 82
 label_lock: // label_lock = 20
-	mov label_lock, %ip			// 4f 14
+	mov $label_lock, %ip		// 4f 14

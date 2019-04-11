@@ -11,6 +11,18 @@
 *.pyc
 *.pyd
 
+*.yy.c
+*.yy.cc
+*.yy.h
+*.yy.hh
+*.tab.c
+*.tab.cc
+*.tab.h
+*.tab.hh
+location.hh
+position.hh
+stack.hh
+
 *.depend
 *.layout
 *.log
@@ -24,3 +36,5 @@ out*
 
 build/*
 !build/CMakeLists.txt
+
+as/as
