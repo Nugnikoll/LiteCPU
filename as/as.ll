@@ -116,7 +116,7 @@
 
 		//printf("%d %d %d %x %x\n", ptr->type, p->next->type, p->type, p->next->num, p->num);
 		if(p->next->type == op_num){
-			printf("%02x %02x\n", result, p->next->num);
+			fprintf(yyout, "%02x %02x\n", result, p->next->num);
 		}else if(p->next->type == op_label){
 			int pos = locate_label(p->next->str);
 			if(pos < 0){
@@ -124,9 +124,9 @@
 				yyerror("undefined label");
 				yyterminate();
 			}
-			printf("%02x %02x\n", result, pos);
+			fprintf(yyout, "%02x %02x\n", result, pos);
 		}else{
-			printf("%02x\n", result);
+			fprintf(yyout, "%02x\n", result);
 		}
 	}
 

@@ -128,7 +128,32 @@ token_ref {
 %%
 
 int main(int argc, char *argv[]){
+
+	//bool flag_in = false;
+	bool flag_out = false;
 	yylineno = 1;
+
+	for(int i = 1; i < argc; ++i) {
+		if(flag_out){
+			flag_out = false;
+			if(!(yyout = fopen(argv[i], "w"))) {
+				fprintf(stderr, "cannot open \"%s\"\n", argv[1]);
+				return 1;
+			}
+		}else if(!strcmp(argv[i], "-o")){
+			flag_out = true;
+		}else{
+			if(!(yyin = fopen(argv[i], "r"))) {
+				fprintf(stderr, "cannot open \"%s\"\n", argv[1]);
+				return 1;
+			}
+		}
+	}
+	if(flag_out){
+		fprintf(stderr, "missing output file\n");
+		return 1;
+	}
+
 	yyparse();
 }
 

@@ -5,6 +5,7 @@
 #include <vector>
 #include <string>
 #include <cstdio>
+#include <cstring>
 //#include <cstdarg>
 #include <unordered_map>
 
@@ -13,6 +14,7 @@ using namespace std;
 extern "C" int yylex();
 extern "C" void va_start(va_list ap, const char *s);
 extern int yylineno; /* from lexer */
+extern FILE *yyin, *yyout;
 extern unordered_map<string, int> table_label;
 void yyerror(const char *s, ...);
 int locate_label(const string& label);
