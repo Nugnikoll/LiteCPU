@@ -23,7 +23,14 @@
 	return token_comma;
 }
 
-\$[0-9]+ {
+\$(?:[0-9]+|0[xX][0-9a-fA-F]+) {
+	if(strlen(yytext) >= 3){
+		if(yytext[2] == 'x' || yytext[2] == 'X'){
+			yylval.num = strtol(yytext + 1, NULL, 16);
+
+			return token_num;
+		}
+	}
 	yylval.num = atoi(yytext + 1);
 	return token_num;
 }
