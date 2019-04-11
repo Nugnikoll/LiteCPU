@@ -27,11 +27,18 @@
 	if(strlen(yytext) >= 3){
 		if(yytext[2] == 'x' || yytext[2] == 'X'){
 			yylval.num = strtol(yytext + 1, NULL, 16);
-
+				if(yylval.num < 0 || yylval.num > 0xff){
+					yyerror("immediate constant overflow");
+					yyterminate();
+				}
 			return token_num;
 		}
 	}
 	yylval.num = atoi(yytext + 1);
+	if(yylval.num < 0 || yylval.num > 0xff){
+		yyerror("immediate constant overflow");
+		yyterminate();
+	}
 	return token_num;
 }
 
