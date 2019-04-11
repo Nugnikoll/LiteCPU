@@ -38,10 +38,8 @@ module ram
 		end
 
 	always @(posedge clk)
-		begin
-			if(read == 1)
-				out_buf <= mem_block[address];
-		end
+		if(read == 1)
+			out_buf <= mem_block[address];
 
 	assign data_out = out_buf;
 
