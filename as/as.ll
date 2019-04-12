@@ -3,13 +3,28 @@
 %{
 #include "as.h"
 #include "as.tab.hh"
+
+int oldstate;
 %}
+
+%x COMMENT
 
 %%
 
-\/\*(?:.|\n)*\*\/ {}
+"//".* ;
 
-"//".* {}
+"/*" {
+	oldstate = YY_START;
+	BEGIN COMMENT;
+}
+<COMMENT>"*/" {
+	BEGIN oldstate;
+}
+<COMMENT>.|\n ;
+<COMMENT><<EOF>> {
+	yyerror("unclosed comment");
+	exit(1);
+}
 
 "(" {
 	return token_par_l;
@@ -53,7 +68,7 @@
 	}else if(!strcmp(ptr, "ip")){
 		yylval.reg_t = reg_ip;
 	}else{
-		yyerror("invalid register name", yytext);
+		yyerror("invalid register name %s", yytext);
 		exit(1);
 	}
 	return token_reg;
@@ -134,7 +149,7 @@
 			int pos = locate_label(p->next->str);
 			if(pos < 0){
 				yylineno = ptr->next->num_line;
-				yyerror("undefined label %s", yytext);
+				yyerror("undefined label $%s", p->next->str);
 				exit(1);
 			}
 			fprintf(yyout, "%02x %02x\n", result, pos);
@@ -143,7 +158,7 @@
 		}
 	}
 
-	exit(1);
+	yyterminate();
 }
 
 %%
