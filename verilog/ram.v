@@ -24,7 +24,7 @@ module ram
 			if(reset)
 				begin : mem_for
 					integer i;
-					for(i = 0; i < size; ++i)
+					for(i = 0; i < size; i = i + 1)
 						mem_block[i] <= 8'h00;
 				end
 			else if(write)

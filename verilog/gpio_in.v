@@ -1,6 +1,6 @@
 // general input
 
-module gpio_in(clk, reset, read, write, ready_r, ready_w, address, data_in, data_out);
+module gpio_in(clk, reset, read, write, ready_r, ready_w, address, data_in, data_out, port_write, port_in);
 
 	parameter size_addr = 0;
 	parameter size = 1;
@@ -14,16 +14,19 @@ module gpio_in(clk, reset, read, write, ready_r, ready_w, address, data_in, data
 	input write;
 	output reg ready_r;
 	output reg ready_w;
+	input [size - 1: 0] port_write;
+	input [size * 7 - 1:0] port_in;
 
-	reg [7:0] mem_block [size - 1: 0];
+	reg [7:0] wait_r;
 	reg [7:0] out_buf;
+	reg [7:0] mem_block [size - 1: 0];
 
 	always @(posedge clk)
 		begin
 			if(reset)
 				begin : mem_for
 					integer i;
-					for(i = 0; i < size; ++i)
+					for(i = 0; i < size; i = i + 1)
 						mem_block[i] <= 8'h00;
 				end
 			else if(write)
@@ -31,13 +34,29 @@ module gpio_in(clk, reset, read, write, ready_r, ready_w, address, data_in, data
 					mem_block[address] <= data_in;
 				else
 					mem_block[0] <= data_in;
+			else
+				begin : port_write_for
+					integer i;
+					for(i = 0; i < size; i = i + 1)
+						if(port_write[i])
+							mem_block[i] <= port_in[i * 8 + 7 -: 8];
+				end
 		end
 
 	always @(posedge clk)
-		begin
-			ready_r <= read;
-			ready_w <= write;
+		begin : wait_r_for
+			for(i = 0; i < size; i = i + 1)
+				if(port_write[i])
+					wait_r[i] = 0;
+				else if(address == i && read)
+					wait_r[i] = 1;
 		end
+
+	always @(posedge clk)
+		ready_w <= write;
+
+	always @(posedge clk)
+		ready_r <= (read || wait_r[address]) && read;
 
 	always @(posedge clk)
 		if(read == 1)
