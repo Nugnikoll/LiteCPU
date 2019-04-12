@@ -157,6 +157,29 @@ int oldstate;
 			fprintf(yyout, "%02x\n", result);
 		}
 	}
+	fprintf(yyout, "\n");
+
+	int size = 128 - num_code;
+	if(size < 0){
+		yyerror("the size of code is %d\n", num_code);
+		yyerror("code segment overflow\n");
+		exit(1);
+	}
+
+	int size_margin = size % 8;
+	if(size_margin){
+		for(int i = 0; i != 8 - size_margin; ++i){
+			fprintf(yyout, "   ");
+		}
+		for(int i = 0; i != size_margin; ++i){
+			fprintf(yyout, "00 ");
+		}
+		fprintf(yyout, "\n");
+	}
+	size /= 8;
+	for(int i = 0; i != size; ++i){
+		fprintf(yyout, "00 00 00 00 00 00 00 00\n");
+	}
 
 	yyterminate();
 }

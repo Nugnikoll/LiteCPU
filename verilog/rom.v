@@ -5,6 +5,7 @@ module rom
 
 	parameter size_addr = 8;
 	parameter size = 128;
+	parameter path = "../data/rom_sum.dat";
 
 	input clk;
 	input read;
@@ -16,20 +17,14 @@ module rom
 	reg [7:0] out_buf;
 
 	initial
-		begin
-			$readmemh("../data/rom_sum.dat", mem_block);
-		end
+		$readmemh(path, mem_block);
 
 	always @(posedge clk)
-		begin
-			ready <= read;
-		end
+		ready <= read;
 
 	always @(posedge clk)
-		begin
-			if(read == 1)
-				out_buf <= mem_block[address];
-		end
+		if(read == 1)
+			out_buf <= mem_block[address];
 
 	assign data = out_buf;
 

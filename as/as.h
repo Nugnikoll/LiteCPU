@@ -57,6 +57,6 @@ struct instruct{
 
 extern instruct* vec_ins;
 extern instruct* vec_end;
-extern int size_code;
+extern int num_code;
 
 #endif

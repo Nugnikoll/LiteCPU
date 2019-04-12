@@ -15,6 +15,8 @@
 
 module computer (clk, reset, port_write, port_in, port_out);
 
+	parameter path = "../data/rom_sum.dat";
+
 	input clk;
 	input reset;
 	input port_write;
@@ -78,7 +80,8 @@ module computer (clk, reset, port_write, port_in, port_out);
 
 	rom #(
 		.size_addr(7),
-		.size(128)
+		.size(128),
+		.path(path)
 	) rom_u (
 		.clk(clk),
 		.read(read),

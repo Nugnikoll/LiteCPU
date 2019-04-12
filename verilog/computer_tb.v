@@ -25,16 +25,23 @@ module computer_tb;
 			reset = 0;
 			#10 reset = 1;
 			#10 reset = 0;
-			#2000 $finish;
+			#3200 $finish;
 		end
 
 	initial
 		begin
 			port_write = 0;
-			port_in = 0;
+			port_in = 10;
+			#100 port_write = 1;
+			#20 port_write = 0;
+			#2000 port_in = 5;
+			#10 port_write = 1;
+			#20 port_write = 0;
 		end
 
-		computer computer_u(
+		computer #(
+			.path("../data/rom_sum.dat")
+		) computer_u(
 			.clk(clk),
 			.reset(reset),
 			.port_write(port_write),
