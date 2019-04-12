@@ -15,7 +15,7 @@ module gpio_in(clk, reset, read, write, ready_r, ready_w, address, data_in, data
 	output reg ready_r;
 	output reg ready_w;
 	input [size - 1: 0] port_write;
-	input [size * 7 - 1:0] port_in;
+	input [size * 8 - 1:0] port_in;
 
 	reg [7:0] wait_r;
 	reg [7:0] out_buf;
@@ -45,6 +45,7 @@ module gpio_in(clk, reset, read, write, ready_r, ready_w, address, data_in, data
 
 	always @(posedge clk)
 		begin : wait_r_for
+			integer i;
 			for(i = 0; i < size; i = i + 1)
 				if(port_write[i])
 					wait_r[i] = 0;
