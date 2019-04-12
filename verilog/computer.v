@@ -38,7 +38,8 @@ module computer (clk, reset, port_write, port_in, port_out);
 	wire read;
 	wire write;
 	wire write_ram;
-	wire write_gpio;
+	wire write_gpio_in;
+	wire write_gpio_out;
 
 	wire [7:0] address;
 	wire [7:0] data_in_rom;
@@ -51,8 +52,13 @@ module computer (clk, reset, port_write, port_in, port_out);
 
 	wire port_write_buf;
 
-	assign write_ram = write && address[7] && (address != 8'hff);
-	assign write_gpio = write && (address == 8'hff);
+	assign read_rom = read && ! address[7];
+	assign read_ram = read && address[7];
+	assign read_gpio_in = read && (address == 8'hfe);
+	assign read_gpio_out = read && (address == 8'hff); 
+	assign write_ram = write && address[7];
+	assign write_gpio_in = write && (address == 8'hfe);
+	assign write_gpio_out = write && (address == 8'hff);
 	assign data_in =
 		address[7]
 		? (address[6:1] == 7'h3f ? data_in_gpio : data_in_ram)
@@ -84,7 +90,7 @@ module computer (clk, reset, port_write, port_in, port_out);
 		.path(path)
 	) rom_u (
 		.clk(clk),
-		.read(read),
+		.read(read_rom),
 		.ready(ready_rom),
 		.address(address[6:0]),
 		.data(data_in_rom)
@@ -96,7 +102,7 @@ module computer (clk, reset, port_write, port_in, port_out);
 	) ram_u (
 		.clk(clk),
 		.reset(reset),
-		.read(read),
+		.read(read_ram),
 		.write(write_ram),
 		.ready_r(ready_ram_r),
 		.ready_w(ready_ram_w),
@@ -111,8 +117,8 @@ module computer (clk, reset, port_write, port_in, port_out);
 	) gpio_in_u (
 		.clk(clk),
 		.reset(reset),
-		.read(read),
-		.write(write_gpio),
+		.read(read_gpio_in),
+		.write(write_gpio_in),
 		.ready_r(ready_gpio_in_r),
 		.ready_w(ready_gpio_in_w),
 		.address(),
@@ -134,8 +140,8 @@ module computer (clk, reset, port_write, port_in, port_out);
 	) gpio_out_u (
 		.clk(clk),
 		.reset(reset),
-		.read(read),
-		.write(write_gpio),
+		.read(read_gpio_out),
+		.write(write_gpio_out),
 		.ready_r(ready_gpio_out_r),
 		.ready_w(ready_gpio_out_w),
 		.address(),
