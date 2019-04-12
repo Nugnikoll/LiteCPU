@@ -1,5 +1,6 @@
 %{
 #include "as.h"
+#include <cstdarg>
 
 instruct* vec_ins;
 instruct* vec_end;
@@ -159,15 +160,14 @@ int main(int argc, char *argv[]){
 
 void
 yyerror(const char *s, ...){
-	//va_list ap;
-	//va_start(ap, s);
+	va_list ap;
+	va_start(ap, s);
 
 	fprintf(stderr, "line %d: error: ", yylineno);
-	//vfprintf(stderr, s, ap);
-	fprintf(stderr, s);
+	vfprintf(stderr, s, ap);
 	fprintf(stderr, "\n");
 
-	//va_end(ap);
+	va_end(ap);
 }
 
 int locate_label(const string& label){

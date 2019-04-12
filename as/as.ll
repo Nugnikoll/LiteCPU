@@ -28,16 +28,16 @@
 		if(yytext[2] == 'x' || yytext[2] == 'X'){
 			yylval.num = strtol(yytext + 1, NULL, 16);
 				if(yylval.num < 0 || yylval.num > 0xff){
-					yyerror("immediate constant overflow");
-					yyterminate();
+					yyerror("immediate constant %s overflow", yytext);
+					exit(1);
 				}
 			return token_num;
 		}
 	}
 	yylval.num = atoi(yytext + 1);
 	if(yylval.num < 0 || yylval.num > 0xff){
-		yyerror("immediate constant overflow");
-		yyterminate();
+		yyerror("immediate constant %s overflow", yytext);
+		exit(1);
 	}
 	return token_num;
 }
@@ -53,8 +53,8 @@
 	}else if(!strcmp(ptr, "ip")){
 		yylval.reg_t = reg_ip;
 	}else{
-		yyerror("invalid register name");
-		yyterminate();
+		yyerror("invalid register name", yytext);
+		exit(1);
 	}
 	return token_reg;
 }
@@ -63,8 +63,8 @@
 	string label = yytext;
 	label = label.substr(0, label.size() - 1);
 	if(table_label.find(label) != table_label.end()){
-		yyerror("duplicated label");
-		yyterminate();
+		yyerror("duplicated label %s", yytext);
+		exit(1);
 	}else{
 		table_label[label] = yylineno;
 	}
@@ -87,8 +87,8 @@
 	}else if(!strcmp(yytext, "test")){
 		yylval.in_t = in_test;
 	}else{
-		yyerror("undefined identifier");
-		yyterminate();
+		yyerror("undefined identifier %s", yytext);
+		exit(1);
 	}
 	return token_cmd;
 }
@@ -100,8 +100,8 @@
 [ \t] {}
 
 . {
-	yyerror("unrecognized character");
-	yyterminate();
+	yyerror("unrecognized character %s", yytext);
+	exit(1);
 }
 
 <<EOF>> {
@@ -128,15 +128,14 @@
 		}
 		result |= p->num;
 
-		//printf("%d %d %d %x %x\n", ptr->type, p->next->type, p->type, p->next->num, p->num);
 		if(p->next->type == op_num){
 			fprintf(yyout, "%02x %02x\n", result, p->next->num);
 		}else if(p->next->type == op_label){
 			int pos = locate_label(p->next->str);
 			if(pos < 0){
 				yylineno = ptr->next->num_line;
-				yyerror("undefined label");
-				yyterminate();
+				yyerror("undefined label %s", yytext);
+				exit(1);
 			}
 			fprintf(yyout, "%02x %02x\n", result, pos);
 		}else{
@@ -144,19 +143,7 @@
 		}
 	}
 
-	yyterminate();
+	exit(1);
 }
 
 %%
-
-//int main(int argc, char *argv[]){
-//	int token;
-//	while((token = yylex())){
-//		printf("%d", token);
-//		if(token == token_num){
-//			printf(" = %d\n", yylval.num);
-//		}else{
-//			printf("\n");
-//		}
-//	}
-//}

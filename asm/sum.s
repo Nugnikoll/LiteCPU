@@ -1,4 +1,4 @@
-// a sample program to calculate the sum of 1, 2, 3 ... 100
+// a sample program to calculate the sum of 1, 2, 3 ... 10
 
 	mov $0, %r0					// 4c 00
 	mov $0, %r1					// 4d 00
