@@ -69,6 +69,7 @@ module computer (clk, reset, port_out);
 		.size(128)
 	) ram_u (
 		.clk(clk),
+		.reset(reset),
 		.read(read),
 		.write(write_ram),
 		.ready_r(ready_ram_r),
@@ -83,6 +84,7 @@ module computer (clk, reset, port_out);
 		.size(1)
 	) gpio_out_u (
 		.clk(clk),
+		.reset(reset),
 		.read(read),
 		.write(write_gpio),
 		.ready_r(ready_gpio_r),
