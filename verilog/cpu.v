@@ -156,12 +156,12 @@ module cpu(
 		if(reset)
 			ip <= 0;
 		else if(cpu_state == `cpu_fetch_end)
-			ip <= ip + 1;
+			ip <= ip + 4'b1;
 		else if(cpu_state == `cpu_exec_end)
 			if(cmd[1:0] == 2'b11)
 				ip <= op2;
 			else if(cmd[7:6] == 2'b01 && cmd[3:2] == 2'b11)
-				ip <= ip + 1;
+				ip <= ip + 4'b1;
 
 	always @(posedge clk)
 		if(cpu_state == `cpu_fetch_end)

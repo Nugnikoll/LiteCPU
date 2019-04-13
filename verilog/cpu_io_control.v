@@ -6,8 +6,6 @@ module cpu_io_control(clk, reset, ready, cpu_state, io_state);
 
 	input clk;
 	input reset;
-	input control_read;
-	input control_write;
 	input ready;
 	input [3:0] cpu_state;
 	output reg [2:0] io_state;

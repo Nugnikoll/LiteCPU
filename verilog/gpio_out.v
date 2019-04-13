@@ -23,7 +23,7 @@ module gpio_out(clk, reset, read, write, ready_r, ready_w, address, data_in, dat
 		if(reset == 1)
 			begin : gpio_out_for
 				integer i;
-				for(i = 0; i < size; ++i)
+				for(i = 0; i < size; i = i + 1)
 					mem_block[i] <= 8'h00;
 			end
 		else if(write == 1)
@@ -48,9 +48,9 @@ module gpio_out(clk, reset, read, write, ready_r, ready_w, address, data_in, dat
 	assign data_out = out_buf;
 
 	genvar i;
-	generate 
+	generate
 		for(i = 0; i < size; i = i + 1)
-			begin
+			begin : gen_port_out
 				assign port_out[i * 8 + 7 -: 8] = mem_block[i];
 			end
 	endgenerate

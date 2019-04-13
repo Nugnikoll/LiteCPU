@@ -10,6 +10,7 @@
 *.exe
 *.pyc
 *.pyd
+*.dat
 
 *.yy.c
 *.yy.cc
@@ -30,6 +31,11 @@ stack.hh
 
 *.vvp
 *.vcd
+
+quartus/db/*
+quartus/incremental_db/*
+quartus/outputfiles/*
+*.bak
 
 out*
 *temp*
