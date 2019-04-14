@@ -35,6 +35,7 @@ stack.hh
 quartus/db/*
 quartus/incremental_db/*
 quartus/outputfiles/*
+quartus/.qsys_edit/*
 *.bak
 
 out*

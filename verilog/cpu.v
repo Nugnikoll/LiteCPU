@@ -242,10 +242,6 @@ module cpu(
 			op2 <= op_res;
 
 	always @(posedge clk)
-		if(cpu_state == `cpu_exec_calc)
-			flag <= rflag;
-
-	always @(posedge clk)
 		if(control_write)
 			data_buf <= op2;
 		else if(io_state == `io_read_wait)
