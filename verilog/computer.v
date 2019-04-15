@@ -52,22 +52,22 @@ module computer (clk, reset, port_write, port_in, port_out);
 
 	wire port_write_buf;
 
-	assign read_rom = read && ! address[15];
-	assign read_ram = read && address[15];
-	assign read_gpio_in = read && (address == 16'hfffe);
-	assign read_gpio_out = read && (address == 16'hffff); 
-	assign write_ram = write && address[15];
-	assign write_gpio_in = write && (address == 16'hfffe);
-	assign write_gpio_out = write && (address == 16'hffff);
+	assign read_rom = read && ! address[10];
+	assign read_ram = read && address[10];
+	assign read_gpio_in = read && (address[10:0] == 11'h7fe);
+	assign read_gpio_out = read && (address[10:0] == 11'h7ff); 
+	assign write_ram = write && address[10];
+	assign write_gpio_in = write && (address[10:0] == 11'h7fe);
+	assign write_gpio_out = write && (address[10:0] == 11'h7ff);
 	assign data_in =
-		address[15]
-		? (address[14:1] == 15'h3fff ? data_in_gpio : data_in_ram)
+		address[10]
+		? (address[9:1] == 9'h1ff ? data_in_gpio : data_in_ram)
 		: data_in_rom;
 	assign data_in_gpio = address[0] ? data_in_gpio_out : data_in_gpio_in;
 	assign ready_ram = ready_ram_r || ready_ram_w;
 	assign ready =
-		address[15]
-		? (address[14:1] == 15'h3fff ? ready_gpio : ready_ram)
+		address[10]
+		? (address[9:1] == 9'h1ff ? ready_gpio : ready_ram)
 		: ready_rom;
 	assign ready_gpio = address[0] ? ready_gpio_out : ready_gpio_in;
 	assign ready_gpio_in = ready_gpio_in_r || ready_gpio_out_w;
@@ -85,20 +85,20 @@ module computer (clk, reset, port_write, port_in, port_out);
 	);
 
 	rom #(
-		.size_addr(15),
-		.size(32768),
+		.size_addr(10),
+		.size(1024),
 		.path(path)
 	) rom_u (
 		.clk(clk),
 		.read(read_rom),
 		.ready(ready_rom),
-		.address(address[14:0]),
+		.address(address[9:0]),
 		.data(data_in_rom)
 	);
 
 	ram #(
-		.size_addr(15),
-		.size(32768)
+		.size_addr(10),
+		.size(1024)
 	) ram_u (
 		.clk(clk),
 		.reset(reset),
@@ -106,7 +106,7 @@ module computer (clk, reset, port_write, port_in, port_out);
 		.write(write_ram),
 		.ready_r(ready_ram_r),
 		.ready_w(ready_ram_w),
-		.address(address[14:0]),
+		.address(address[9:0]),
 		.data_in(data_out),
 		.data_out(data_in_ram)
 	);

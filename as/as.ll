@@ -162,7 +162,7 @@ int oldstate;
 	}
 	fprintf(yyout, "\n");
 
-	int size = 32768 - num_code;
+	int size = 1024 - num_code;
 	if(size < 0){
 		yyerror("the size of code is %d\n", num_code);
 		yyerror("code segment overflow\n");

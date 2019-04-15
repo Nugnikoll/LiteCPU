@@ -18,10 +18,10 @@
 
 label_begin:
 	// input n from gpio
-	mov $0xfffe, %r2
+	mov $0x7fe, %r2
 	mov (%r2), %r2
 	// store n in ram
-	mov $0x8000, %r1
+	mov $0x400, %r1
 	mov %r2, (%r1)
 	// initial 0 -> sum -> r0
 	mov $0, %r0
@@ -33,13 +33,13 @@ label_loop:
 	// ++i
 	add $1, %r1
 	// n -> r2
-	mov $0x8000, %r2
+	mov $0x400, %r2
 	mov (%r2), %r2
 	// (i - n == 0) -> r2
 	sub %r1, %r2
 	cmove $label_loop, %ip
 label_end:
 	// output sum to gpio
-	mov $0xffff, %r2
+	mov $0x7ff, %r2
 	mov %r0, (%r2)
 	mov $label_begin, %ip
