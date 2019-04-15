@@ -5,8 +5,8 @@ module computer_tb;
 	reg clk;
 	reg reset;
 	reg port_write;
-	reg [7:0] port_in;
-	wire [7:0] port_out;
+	reg [15:0] port_in;
+	wire [15:0] port_out;
 
 	initial
 		begin

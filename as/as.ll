@@ -42,7 +42,7 @@ int oldstate;
 	if(strlen(yytext) >= 3){
 		if(yytext[2] == 'x' || yytext[2] == 'X'){
 			yylval.num = strtol(yytext + 1, NULL, 16);
-				if(yylval.num < 0 || yylval.num > 0xff){
+				if(yylval.num < 0 || yylval.num > 0xffff){
 					yyerror("immediate constant %s overflow", yytext);
 					exit(1);
 				}
@@ -50,7 +50,7 @@ int oldstate;
 		}
 	}
 	yylval.num = atoi(yytext + 1);
-	if(yylval.num < 0 || yylval.num > 0xff){
+	if(yylval.num < 0 || yylval.num > 0xffff){
 		yyerror("immediate constant %s overflow", yytext);
 		exit(1);
 	}
@@ -65,6 +65,14 @@ int oldstate;
 		yylval.reg_t = reg_r1;
 	}else if(!strcmp(ptr, "r2")){
 		yylval.reg_t = reg_r2;
+	}else if(!strcmp(ptr, "r3")){
+		yylval.reg_t = reg_r3;
+	}else if(!strcmp(ptr, "r4")){
+		yylval.reg_t = reg_r4;
+	}else if(!strcmp(ptr, "r5")){
+		yylval.reg_t = reg_r5;
+	}else if(!strcmp(ptr, "r6")){
+		yylval.reg_t = reg_r6;
 	}else if(!strcmp(ptr, "ip")){
 		yylval.reg_t = reg_ip;
 	}else{
@@ -93,14 +101,9 @@ int oldstate;
 }
 
 [a-z_][a-z_0-9]* {
-	if(!strcmp(yytext, "mov")){
-		yylval.in_t = in_mov;
-	}else if(!strcmp(yytext, "add")){
-		yylval.in_t = in_add;
-	}else if(!strcmp(yytext, "sub")){
-		yylval.in_t = in_sub;
-	}else if(!strcmp(yytext, "test")){
-		yylval.in_t = in_test;
+	string str = yytext;
+	if(ins_dict.find(str) != ins_dict.end()){
+		yylval.in_t = in_type(ins_dict[str]);
 	}else{
 		yyerror("undefined identifier %s", yytext);
 		exit(1);
@@ -130,21 +133,21 @@ int oldstate;
 		p = ptr->vec;
 
 		if(p->next->type != op_reg){
-			result |= 1 << 6; 
+			result |= 1 << 14; 
 		}
 		if(p->type != op_reg){
-			result |= 1 << 7; 
+			result |= 1 << 15; 
 		}
-		result |= ptr->type << 4;
+		result |= ptr->type << 8;
 		if(p->next->type == op_num || p->next->type == op_label){
-			result |= 3 << 2;
+			result |= 0x7 << 5;
 		}else{
-			result |= p->next->num << 2;
+			result |= p->next->num << 5;
 		}
-		result |= p->num;
+		result |= p->num << 2;
 
 		if(p->next->type == op_num){
-			fprintf(yyout, "%02x %02x\n", result, p->next->num);
+			fprintf(yyout, "%04x %04x\n", result, p->next->num);
 		}else if(p->next->type == op_label){
 			int pos = locate_label(p->next->str);
 			if(pos < 0){
@@ -152,33 +155,33 @@ int oldstate;
 				yyerror("undefined label $%s", p->next->str);
 				exit(1);
 			}
-			fprintf(yyout, "%02x %02x\n", result, pos);
+			fprintf(yyout, "%04x %04x\n", result, pos);
 		}else{
-			fprintf(yyout, "%02x\n", result);
+			fprintf(yyout, "%04x\n", result);
 		}
 	}
 	fprintf(yyout, "\n");
 
-	int size = 128 - num_code;
+	int size = 32768 - num_code;
 	if(size < 0){
 		yyerror("the size of code is %d\n", num_code);
 		yyerror("code segment overflow\n");
 		exit(1);
 	}
 
-	int size_margin = size % 8;
+	int size_margin = size % 16;
 	if(size_margin){
-		for(int i = 0; i != 8 - size_margin; ++i){
-			fprintf(yyout, "   ");
+		for(int i = 0; i != 16 - size_margin; ++i){
+			fprintf(yyout, "     ");
 		}
 		for(int i = 0; i != size_margin; ++i){
-			fprintf(yyout, "00 ");
+			fprintf(yyout, "0000 ");
 		}
 		fprintf(yyout, "\n");
 	}
-	size /= 8;
+	size /= 16;
 	for(int i = 0; i != size; ++i){
-		fprintf(yyout, "00 00 00 00 00 00 00 00\n");
+		fprintf(yyout, "0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000\n");
 	}
 
 	yyterminate();

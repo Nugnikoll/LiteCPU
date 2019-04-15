@@ -7,8 +7,8 @@ module qcomputer (clk, reset, port_write, port_in, port_out);
 	input clk;
 	input reset;
 	input port_write;
-	input [7:0] port_in;
-	output [7:0] port_out;
+	input [15:0] port_in;
+	output [15:0] port_out;
 
 	wire reset_n;
 	wire port_write_n;

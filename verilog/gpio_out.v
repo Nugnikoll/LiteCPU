@@ -12,19 +12,19 @@ module gpio_out(clk, reset, read, write, ready_r, ready_w, address, data_in, dat
 	output reg ready_r;
 	output reg ready_w;
 	input [size_addr - 1:0] address;
-	input [7:0] data_in;
-	output [7:0] data_out;
-	output [size * 8 - 1:0] port_out;
+	input [15:0] data_in;
+	output [15:0] data_out;
+	output [size * 16 - 1:0] port_out;
 
-	reg [7:0] mem_block [size - 1: 0];
-	reg [7:0] out_buf;
+	reg [15:0] mem_block [size - 1: 0];
+	reg [15:0] out_buf;
 
 	always @(posedge clk)
 		if(reset == 1)
 			begin : gpio_out_for
 				integer i;
 				for(i = 0; i < size; i = i + 1)
-					mem_block[i] <= 8'h00;
+					mem_block[i] <= 16'h0000;
 			end
 		else if(write == 1)
 			if(size_addr)
@@ -51,7 +51,7 @@ module gpio_out(clk, reset, read, write, ready_r, ready_w, address, data_in, dat
 	generate
 		for(i = 0; i < size; i = i + 1)
 			begin : gen_port_out
-				assign port_out[i * 8 + 7 -: 8] = mem_block[i];
+				assign port_out[i * 16 + 15 -: 16] = mem_block[i];
 			end
 	endgenerate
 

@@ -9,15 +9,15 @@ module ram
 	input clk;
 	input reset;
 	input [size_addr - 1:0] address;
-	input [7:0] data_in;
-	output [7:0] data_out;
+	input [15:0] data_in;
+	output [15:0] data_out;
 	input read;
 	input write;
 	output reg ready_r;
 	output reg ready_w;
 
-	reg [7:0] mem_block [size - 1: 0];
-	reg [7:0] out_buf;
+	reg [15:0] mem_block [size - 1: 0];
+	reg [15:0] out_buf;
 
 	always @(posedge clk)
 		begin
@@ -25,7 +25,7 @@ module ram
 				begin : mem_for
 					integer i;
 					for(i = 0; i < size; i = i + 1)
-						mem_block[i] <= 8'h00;
+						mem_block[i] <= 16'h0000;
 				end
 			else if(write)
 				mem_block[address] <= data_in;

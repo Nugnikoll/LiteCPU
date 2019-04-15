@@ -4,22 +4,23 @@ module gpio_in(clk, reset, read, write, ready_r, ready_w, address, data_in, data
 
 	parameter size_addr = 0;
 	parameter size = 1;
+	parameter width = 16;
 
 	input clk;
 	input reset;
 	input [size_addr - 1:0] address;
-	input [7:0] data_in;
-	output [7:0] data_out;
+	input [15:0] data_in;
+	output [15:0] data_out;
 	input read;
 	input write;
 	output reg ready_r;
 	output reg ready_w;
 	input [size - 1:0] port_write;
-	input [size * 8 - 1:0] port_in;
+	input [size * 16 - 1:0] port_in;
 
 	reg [size - 1:0] wait_r;
-	wire [7:0] out_buf;
-	reg [7:0] mem_block [size - 1: 0];
+	wire [15:0] out_buf;
+	reg [15:0] mem_block [size - 1: 0];
 
 	always @(posedge clk)
 		begin
@@ -27,7 +28,7 @@ module gpio_in(clk, reset, read, write, ready_r, ready_w, address, data_in, data
 				begin : mem_for
 					integer i;
 					for(i = 0; i < size; i = i + 1)
-						mem_block[i] <= 8'h00;
+						mem_block[i] <= 16'h0000;
 				end
 			else if(write)
 				if(size_addr)
@@ -39,7 +40,7 @@ module gpio_in(clk, reset, read, write, ready_r, ready_w, address, data_in, data
 					integer i;
 					for(i = 0; i < size; i = i + 1)
 						if(port_write[i])
-							mem_block[i] <= port_in[i * 8 + 7 -: 8];
+							mem_block[i] <= port_in[i * 16 + 15 -: 16];
 				end
 		end
 

@@ -7,6 +7,7 @@ instruct* vec_end;
 int num_code;
 
 unordered_map<string, int> table_label;
+unordered_map<string, int> ins_dict;
 %}
 
 %union {
@@ -81,7 +82,6 @@ instruct: token_cmd oprand_list {
 	if(
 		p->type == op_num
 		|| p->type == op_label
-		|| (p->next->type != op_reg && p->type == op_mem)
 	){
 		--yylineno;
 		yyerror("invalid oprand type");
@@ -154,6 +154,46 @@ int main(int argc, char *argv[]){
 		fprintf(stderr, "missing output file\n");
 		return 1;
 	}
+
+	ins_dict["cmove"] = in_cmove;
+	ins_dict["cmovz"] = in_cmove;
+	ins_dict["cmovne"] = in_cmovne;
+	ins_dict["cmovnz"] = in_cmovne;
+	ins_dict["cmova"] = in_cmova;
+	ins_dict["cmovna"] = in_cmovna;
+	ins_dict["cmovbe"] = in_cmovna;
+	ins_dict["cmovb"] = in_cmovb;
+	ins_dict["cmovnc"] = in_cmovb;
+	ins_dict["cmovnb"] = in_cmovnb;
+	ins_dict["cmovae"] = in_cmovnb;
+	ins_dict["cmovc"] = in_cmovnb;
+	ins_dict["cmovg"] = in_cmovg;
+	ins_dict["cmovng"] = in_cmovng;
+	ins_dict["cmovle"] = in_cmovng;
+	ins_dict["cmovl"] = in_cmovl;
+	ins_dict["cmovnl"] = in_cmovnl;
+	ins_dict["cmovge"] = in_cmovnl;
+	ins_dict["cmovo"] = in_cmovo;
+	ins_dict["cmovno"] = in_cmovno;
+	ins_dict["cmovs"] = in_cmovs;
+	ins_dict["cmovns"] = in_cmovns;
+	ins_dict["cmovp"] = in_cmovp;
+	ins_dict["cmovnp"] = in_cmovnp;
+	ins_dict["mov"] = in_mov;
+	ins_dict["not"] = in_not;
+	ins_dict["and"] = in_and;
+	ins_dict["or"] = in_or;
+	ins_dict["xor"] = in_xor;
+	ins_dict["shl"] = in_shl;
+	ins_dict["rol"] = in_rol;
+	ins_dict["shr"] = in_shr;
+	ins_dict["ror"] = in_ror;
+	ins_dict["sar"] = in_sar;
+	ins_dict["add"] = in_add;
+	ins_dict["adc"] = in_adc;
+	ins_dict["sub"] = in_sub;
+	ins_dict["sbb"] = in_sbb;
+	ins_dict["neg"] = in_neg;
 
 	yyparse();
 }

@@ -11,10 +11,10 @@ module rom
 	input read;
 	output reg ready;
 	input [size_addr - 1:0] address;
-	output [7:0] data;
+	output [15:0] data;
 
-	reg [7:0] mem_block [size - 1: 0];
-	reg [7:0] out_buf;
+	reg [15:0] mem_block [size - 1: 0];
+	reg [15:0] out_buf;
 
 	initial
 		$readmemh(path, mem_block);

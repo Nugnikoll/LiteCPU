@@ -3,10 +3,10 @@
 
 all: computer.vcd
 
-computer.vcd: computer.vvp ../data/rom_sum.dat
+computer.vcd: computer.vvp
 	vvp $<
 
-computer.vvp: ../verilog/computer_tb.v $(wildcard ../verilog/*.v)
+computer.vvp: ../verilog/computer_tb.v $(wildcard ../verilog/*.v) ../data/rom_sum.dat
 	iverilog -I ../verilog $< -o $@
 
 clean:
